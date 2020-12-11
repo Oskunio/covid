@@ -19,6 +19,9 @@ export class WebService {
     return this.http.get(`${this.url}/history`,{params: new HttpParams().set('country', country),
     headers: new HttpHeaders().set('x-rapidapi-key', this.apiKey)});
 
-    }
+  }
 
+  getCountries() {
+    return this.http.get(`${this.url}/countries`, { headers: new HttpHeaders().set('x-rapidapi-key', this.apiKey)});
+  }
 }

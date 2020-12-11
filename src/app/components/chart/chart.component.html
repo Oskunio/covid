@@ -1,4 +1,38 @@
 <div class="container">
+  <div class="row justify-content-center" style="margin-top: 30px;margin-bottom: 10px;">
+
+    <div class="col-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Time period</mat-label>
+        <mat-select [(value)]="selected">
+          <mat-option value="week">Last 7 days</mat-option>
+          <mat-option value="month">Last 30 days</mat-option>
+          <mat-option value="all">All</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+
+    <div class="col-4">
+      <form class="example-form">
+        <mat-form-field class="example-full-width">
+          <input type="text"
+                 placeholder="Select country"
+                 aria-label="Number"
+                 matInput
+                 [formControl]="myControl"
+                 [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+
+    </div>
+
+  </div>
   <div class="row">
     <div class="col-8 mx-auto">
       <canvas id="myChart"></canvas>
