@@ -16,6 +16,7 @@ export class ChartComponent implements OnInit {
   statistics: Statistics[];
   length: number;
   countries: string[] = [];
+
   //chart
   chart: Chart;
   labels: string[] = [];
@@ -23,8 +24,8 @@ export class ChartComponent implements OnInit {
   newCases: number[] = [];
 
   // controls
-  selected = 'week';
-  myControl = new FormControl('Poland');
+  selectedPeriod = 'week';
+  selectedCountry = new FormControl('Poland');
   filteredOptions: Observable<string[]>;
 
   constructor(private webService: WebService) { }
@@ -33,7 +34,7 @@ export class ChartComponent implements OnInit {
     this.getCountryHistoryStatistics('Poland');
     this.getCountries();
     this.initChart();
-    this.filteredOptions = this.myControl.valueChanges
+    this.filteredOptions = this.selectedCountry.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filter(value))
@@ -49,12 +50,33 @@ export class ChartComponent implements OnInit {
     this.webService.getCountryHistoryStatistics(country).subscribe((res:any) => {
       this.length = res.results;
       this.statistics = res.response;
-
-      for(let i=this.length-8; i < this.length-1;i++){
-        this.labels.push(this.statistics[i].day);
-        this.newCases.push(Number(this.statistics[i].cases.new));
-        this.deaths.push(Number(this.statistics[i].deaths.new));
+      // remove repetitions focusing on null values
+      for(let i=0;i<this.length-1;i++) {
+        if(this.statistics[i].day == this.statistics[i+1].day) {
+          this.length--;
+          if(this.statistics[i].cases.new == null) {
+            this.statistics.splice(i,1);
+          } else if(this.statistics[i+1].cases.new == null) {
+            this.statistics.splice(i+1,1);
+          } else {
+            this.statistics.splice(i,1);
+          }
+        }
       }
+      // remove repetitions
+      // this.statistics = this.statistics.filter((thing, index, self) =>
+      //   index === self.findIndex((t) => (
+      //     t.day === thing.day
+      //   ))
+      // )
+
+
+      // for(let i=7; i > 0;i--){
+      //   this.labels.push(this.statistics[i].day);
+      //   this.newCases.push(Number(this.statistics[i].cases.new));
+      //   this.deaths.push(Number(this.statistics[i].deaths.new));
+      // }
+      this.setTimePeriod(30);
       this.chart.update();
       console.log(this.deaths);
       console.log(this.newCases);
@@ -65,7 +87,6 @@ export class ChartComponent implements OnInit {
   getCountries() {
     this.webService.getCountries().subscribe((res: any) => {
       this.countries = res.response;
-      console.log(this.countries);
     });
   }
 
@@ -94,14 +115,28 @@ export class ChartComponent implements OnInit {
               yAxes: [{
                   ticks: {
                       beginAtZero: true,
-                      autoSkip: true,
-                      maxTicksLimit: 7
                   }
-              }]
+              }],
+              xAxes: [{
+                ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 10
+                }
+            }]
           }
       }
   });
   }
 
-
+  setTimePeriod(time: number) {
+    //this.labels = [];
+    //this.newCases = [];
+    //this.deaths = [];
+    for(let i=time; i > 0;i--){
+        this.labels.push(this.statistics[i].day);
+        this.newCases.push(Number(this.statistics[i].cases.new));
+        this.deaths.push(Number(this.statistics[i].deaths.new));
+      }
+      this.chart.update();
+  }
 }
