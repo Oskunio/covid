@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,6 +11,14 @@ export class WebService {
   getStatitics() {
 
     return this.http.get(`${this.url}/statistics`,{ headers: new HttpHeaders().set('x-rapidapi-key', this.apiKey)});
+
   }
+
+  getCountryHistoryStatistics(country: string) {
+
+    return this.http.get(`${this.url}/history`,{params: new HttpParams().set('country', country),
+    headers: new HttpHeaders().set('x-rapidapi-key', this.apiKey)});
+
+    }
 
 }
