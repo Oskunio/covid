@@ -1,23 +1,22 @@
-import { Statistics } from './../../models/statistics.model';
-import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
+import { Component, OnInit } from '@angular/core';
+import { Statistics } from 'src/app/models/statistics.model';
 import { StatisticsService } from 'src/app/services/statistics.service';
 
-
 @Component({
-  selector: 'app-chart',
-  templateUrl: './chart.component.html',
-  styleUrls: ['./chart.component.scss']
+  selector: 'app-chart3',
+  templateUrl: './chart3.component.html',
+  styleUrls: ['./chart3.component.scss']
 })
-export class ChartComponent implements OnInit {
+export class Chart3Component implements OnInit {
+
   // data
   statistics: Statistics[];
 
   //chart
-  chart: Chart;
+  chart3: Chart;
   labels: string[] = [];
-  deaths: number[] = [];
-  newCases: number[] = [];
+  activeCases: number[] = [];
 
   // filter
   selectedPeriod = 'week';
@@ -43,29 +42,22 @@ export class ChartComponent implements OnInit {
   }
 
   initChart() {
-    this.chart = new Chart('myChart', {
-      type: 'line',
+    this.chart3 = new Chart('myChart3', {
+      type: 'bar',
       data: {
           labels: this.labels,
           datasets: [{
-            label: 'new cases',
-            data: this.newCases,
+            label: 'cases',
+            data: this.activeCases,
             borderColor: '#5158d6',
             backgroundColor: '#151ca3',
-            fill:'false'
-          },
-          {
-            label: 'new deaths',
-            data: this.deaths,
-            borderColor: '#8a0808',
-            backgroundColor: '#81088a',
             fill:'false'
           }],
       },
       options: {
         title: {
           display: true,
-          text: 'New cases and deaths chart'
+          text: 'Active cases chart'
       },
           scales: {
               yAxes: [{
@@ -87,20 +79,17 @@ export class ChartComponent implements OnInit {
   setChartDataPeriod(time: number) {
     for(let i=time-1; i >= 0;i--){
         this.labels.push(this.statistics[i].day);
-        this.newCases.push(Number(this.statistics[i].cases.new));
-        this.deaths.push(Number(this.statistics[i].deaths.new));
+        this.activeCases.push(Number(this.statistics[i].cases.active));
       }
-      this.chart.data.datasets[0].data = this.newCases;
-      this.chart.data.datasets[1].data = this.deaths;
-      this.chart.data.labels = this.labels
-      this.chart.update();
+      this.chart3.data.datasets[0].data = this.activeCases;
+      this.chart3.data.labels = this.labels
+      this.chart3.update();
 
   }
 
   setTimePeriod() {
     this.labels = [];
-    this.newCases = [];
-    this.deaths = [];
+    this.activeCases = [];
     if(this.selectedPeriod == 'week') {
       this.setChartDataPeriod(7);
     } else if(this.selectedPeriod == 'month') {
@@ -109,6 +98,5 @@ export class ChartComponent implements OnInit {
       this.setChartDataPeriod(this.statistics.length);
     }
   }
-
 
 }

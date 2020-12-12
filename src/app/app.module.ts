@@ -11,12 +11,16 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import { FilterComponent } from './components/filter/filter.component';
+import { Chart2Component } from './components/chart2/chart2.component';
+import { Chart3Component } from './components/chart3/chart3.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ChartComponent,
-    FilterComponent
+    FilterComponent,
+    Chart2Component,
+    Chart3Component
   ],
   imports: [
     BrowserModule,

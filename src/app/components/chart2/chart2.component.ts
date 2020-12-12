@@ -1,23 +1,22 @@
-import { Statistics } from './../../models/statistics.model';
-import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
+import { Component, OnInit } from '@angular/core';
 import { StatisticsService } from 'src/app/services/statistics.service';
-
+import { Statistics } from 'src/app/models/statistics.model';
 
 @Component({
-  selector: 'app-chart',
-  templateUrl: './chart.component.html',
-  styleUrls: ['./chart.component.scss']
+  selector: 'app-chart2',
+  templateUrl: './chart2.component.html',
+  styleUrls: ['./chart2.component.scss']
 })
-export class ChartComponent implements OnInit {
+export class Chart2Component implements OnInit {
   // data
   statistics: Statistics[];
 
   //chart
-  chart: Chart;
+  chart2: Chart;
   labels: string[] = [];
   deaths: number[] = [];
-  newCases: number[] = [];
+  cases: number[] = [];
 
   // filter
   selectedPeriod = 'week';
@@ -28,7 +27,6 @@ export class ChartComponent implements OnInit {
     this.getStatistics();
     this.initChart();
   }
-
   getStatistics() {
     this.statisticsService.getStatistics().subscribe((data: Statistics[]) => {
       this.statistics = data;
@@ -43,19 +41,19 @@ export class ChartComponent implements OnInit {
   }
 
   initChart() {
-    this.chart = new Chart('myChart', {
+    this.chart2 = new Chart('myChart2', {
       type: 'line',
       data: {
           labels: this.labels,
           datasets: [{
-            label: 'new cases',
-            data: this.newCases,
+            label: 'cases',
+            data: this.cases,
             borderColor: '#5158d6',
             backgroundColor: '#151ca3',
             fill:'false'
           },
           {
-            label: 'new deaths',
+            label: 'deaths',
             data: this.deaths,
             borderColor: '#8a0808',
             backgroundColor: '#81088a',
@@ -65,7 +63,7 @@ export class ChartComponent implements OnInit {
       options: {
         title: {
           display: true,
-          text: 'New cases and deaths chart'
+          text: 'Total cases and deaths chart'
       },
           scales: {
               yAxes: [{
@@ -87,19 +85,19 @@ export class ChartComponent implements OnInit {
   setChartDataPeriod(time: number) {
     for(let i=time-1; i >= 0;i--){
         this.labels.push(this.statistics[i].day);
-        this.newCases.push(Number(this.statistics[i].cases.new));
-        this.deaths.push(Number(this.statistics[i].deaths.new));
+        this.cases.push(Number(this.statistics[i].cases.total));
+        this.deaths.push(Number(this.statistics[i].deaths.total));
       }
-      this.chart.data.datasets[0].data = this.newCases;
-      this.chart.data.datasets[1].data = this.deaths;
-      this.chart.data.labels = this.labels
-      this.chart.update();
+      this.chart2.data.datasets[0].data = this.cases;
+      this.chart2.data.datasets[1].data = this.deaths;
+      this.chart2.data.labels = this.labels
+      this.chart2.update();
 
   }
 
   setTimePeriod() {
     this.labels = [];
-    this.newCases = [];
+    this.cases = [];
     this.deaths = [];
     if(this.selectedPeriod == 'week') {
       this.setChartDataPeriod(7);
@@ -109,6 +107,4 @@ export class ChartComponent implements OnInit {
       this.setChartDataPeriod(this.statistics.length);
     }
   }
-
-
 }
