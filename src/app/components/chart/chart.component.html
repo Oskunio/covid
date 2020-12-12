@@ -4,7 +4,7 @@
     <div class="col-4">
       <mat-form-field appearance="fill">
         <mat-label>Time period</mat-label>
-        <mat-select [(value)]="selectedPeriod">
+        <mat-select [(value)]="selectedPeriod" (selectionChange)="timePeriodSelected()">
           <mat-option value="week">Last 7 days</mat-option>
           <mat-option value="month">Last 30 days</mat-option>
           <mat-option value="all">All</mat-option>
@@ -22,7 +22,7 @@
                  matInput
                  [formControl]="selectedCountry"
                  [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectCountry()">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
               {{option}}
             </mat-option>

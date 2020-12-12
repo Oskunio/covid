@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
 import { FormControl } from '@angular/forms';
 import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import { map, startWith} from 'rxjs/operators';
 
 @Component({
   selector: 'app-chart',
@@ -63,24 +63,12 @@ export class ChartComponent implements OnInit {
           }
         }
       }
-      // remove repetitions
-      // this.statistics = this.statistics.filter((thing, index, self) =>
-      //   index === self.findIndex((t) => (
-      //     t.day === thing.day
-      //   ))
-      // )
 
+      this.timePeriodSelected();
 
-      // for(let i=7; i > 0;i--){
-      //   this.labels.push(this.statistics[i].day);
-      //   this.newCases.push(Number(this.statistics[i].cases.new));
-      //   this.deaths.push(Number(this.statistics[i].deaths.new));
-      // }
-      this.setTimePeriod(30);
-      this.chart.update();
-      console.log(this.deaths);
-      console.log(this.newCases);
-      console.log(this.labels);
+      // console.log(this.deaths);
+      // console.log(this.newCases);
+      // console.log(this.labels);
     });
   }
 
@@ -129,14 +117,33 @@ export class ChartComponent implements OnInit {
   }
 
   setTimePeriod(time: number) {
-    //this.labels = [];
-    //this.newCases = [];
-    //this.deaths = [];
-    for(let i=time; i > 0;i--){
+    for(let i=time-1; i >= 0;i--){
         this.labels.push(this.statistics[i].day);
         this.newCases.push(Number(this.statistics[i].cases.new));
         this.deaths.push(Number(this.statistics[i].deaths.new));
       }
+      this.chart.data.datasets[0].data = this.newCases;
+      this.chart.data.datasets[1].data = this.deaths;
+      this.chart.data.labels = this.labels
       this.chart.update();
+
   }
+
+  timePeriodSelected() {
+    this.labels = [];
+    this.newCases = [];
+    this.deaths = [];
+    if(this.selectedPeriod == 'week') {
+      this.setTimePeriod(7);
+    } else if(this.selectedPeriod == 'month') {
+      this.setTimePeriod(30);
+    } else if(this.selectedPeriod == 'all') {
+      this.setTimePeriod(this.statistics.length);
+    }
+  }
+
+  selectCountry() {
+    this.getCountryHistoryStatistics(this.selectedCountry.value);
+  }
+
 }
