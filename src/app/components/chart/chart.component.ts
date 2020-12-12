@@ -1,10 +1,8 @@
 import { Statistics } from './../../models/statistics.model';
-import { WebService } from './../../services/web.service';
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
-import { FormControl } from '@angular/forms';
-import {Observable} from 'rxjs';
-import { map, startWith} from 'rxjs/operators';
+import { StatisticsService } from 'src/app/services/statistics.service';
+
 
 @Component({
   selector: 'app-chart',
@@ -14,8 +12,6 @@ import { map, startWith} from 'rxjs/operators';
 export class ChartComponent implements OnInit {
   // data
   statistics: Statistics[];
-  length: number;
-  countries: string[] = [];
 
   //chart
   chart: Chart;
@@ -23,64 +19,35 @@ export class ChartComponent implements OnInit {
   deaths: number[] = [];
   newCases: number[] = [];
 
-  // controls
+  // filter
   selectedPeriod = 'week';
-  selectedCountry = new FormControl('Poland');
-  filteredOptions: Observable<string[]>;
-
-  constructor(private webService: WebService) { }
+  //selectedCountry = 'Poland';
+  constructor(private statisticsService: StatisticsService) { }
 
   ngOnInit(): void {
-    this.getCountryHistoryStatistics('Poland');
-    this.getCountries();
+    this.getSelectedPeriod();
+    this.getStatistics();
+    //this.getSelectedCountry();
     this.initChart();
-    this.filteredOptions = this.selectedCountry.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value))
-      );
-  }
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.countries.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  getCountryHistoryStatistics(country: string) {
-    this.webService.getCountryHistoryStatistics(country).subscribe((res:any) => {
-      this.length = res.results;
-      this.statistics = res.response;
-      // remove repetitions and null values
-      for(let i=0;i<this.length-1;i++) {
-        let day1 = this.statistics[i].day;
-        let day2 = this.statistics[i+1].day;
-        if(this.statistics[i].day == this.statistics[i+1].day) {
-
-          if(this.statistics[i].cases.new == null) {
-            this.statistics.splice(i,1);
-          } else if(this.statistics[i+1].cases.new == null) {
-            this.statistics.splice(i+1,1);
-          } else {
-            this.statistics.splice(i,1);
-          }
-          this.length--;
-          i--;
-        }
-      }
-
-      this.timePeriodSelected();
-
-      // console.log(this.deaths);
-      // console.log(this.newCases);
-      // console.log(this.labels);
+  getStatistics() {
+    this.statisticsService.getStatistics().subscribe((data: Statistics[]) => {
+      this.statistics = data;
+      this.setTimePeriod();
     });
   }
-
-  getCountries() {
-    this.webService.getCountries().subscribe((res: any) => {
-      this.countries = res.response;
+  getSelectedPeriod() {
+    this.statisticsService.getSelectedPeriod().subscribe((data:string) => {
+      this.selectedPeriod = data;
+      this.setTimePeriod();
     });
   }
+  // getSelectedCountry() {
+  //   this.statisticsService.getSelectedCountry().subscribe((data: string) => {
+  //     this.selectedCountry = data;
+  //   });
+  // }
 
   initChart() {
     this.chart = new Chart('myChart', {
@@ -120,7 +87,7 @@ export class ChartComponent implements OnInit {
   });
   }
 
-  setTimePeriod(time: number) {
+  setChartDataPeriod(time: number) {
     for(let i=time-1; i >= 0;i--){
         this.labels.push(this.statistics[i].day);
         this.newCases.push(Number(this.statistics[i].cases.new));
@@ -133,21 +100,18 @@ export class ChartComponent implements OnInit {
 
   }
 
-  timePeriodSelected() {
+  setTimePeriod() {
     this.labels = [];
     this.newCases = [];
     this.deaths = [];
     if(this.selectedPeriod == 'week') {
-      this.setTimePeriod(7);
+      this.setChartDataPeriod(7);
     } else if(this.selectedPeriod == 'month') {
-      this.setTimePeriod(30);
+      this.setChartDataPeriod(30);
     } else if(this.selectedPeriod == 'all') {
-      this.setTimePeriod(this.statistics.length);
+      this.setChartDataPeriod(this.statistics.length);
     }
   }
 
-  selectCountry() {
-    this.getCountryHistoryStatistics(this.selectedCountry.value);
-  }
 
 }

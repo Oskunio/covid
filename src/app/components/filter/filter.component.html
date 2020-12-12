@@ -1,0 +1,34 @@
+<div class="container">
+  <div class="row justify-content-center">
+
+    <div class="col">
+      <mat-form-field appearance="fill">
+        <mat-label>Time period</mat-label>
+        <mat-select [(value)]="selectedPeriod" (selectionChange)="sendSelectedPeriod()">
+          <mat-option value="week">Last 7 days</mat-option>
+          <mat-option value="month">Last 30 days</mat-option>
+          <mat-option value="all">All</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="col">
+      <form class="example-form">
+        <mat-form-field class="example-full-width">
+          <input type="text"
+                 placeholder="Select country"
+                 aria-label="Number"
+                 matInput
+                 [formControl]="selectedCountry"
+                 [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="sendSelectedCountry()">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+    </div>
+
+  </div>
+</div>
