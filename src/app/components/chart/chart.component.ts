@@ -50,10 +50,12 @@ export class ChartComponent implements OnInit {
     this.webService.getCountryHistoryStatistics(country).subscribe((res:any) => {
       this.length = res.results;
       this.statistics = res.response;
-      // remove repetitions focusing on null values
+      // remove repetitions and null values
       for(let i=0;i<this.length-1;i++) {
+        let day1 = this.statistics[i].day;
+        let day2 = this.statistics[i+1].day;
         if(this.statistics[i].day == this.statistics[i+1].day) {
-          this.length--;
+
           if(this.statistics[i].cases.new == null) {
             this.statistics.splice(i,1);
           } else if(this.statistics[i+1].cases.new == null) {
@@ -61,6 +63,8 @@ export class ChartComponent implements OnInit {
           } else {
             this.statistics.splice(i,1);
           }
+          this.length--;
+          i--;
         }
       }
 
