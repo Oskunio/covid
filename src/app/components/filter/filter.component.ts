@@ -38,7 +38,7 @@ export class FilterComponent implements OnInit {
   getCountries() {
     this.webService.getCountries().subscribe((res: any) => {
       this.countries = res.response;
-      console.log(this.countries);
+      //console.log(this.countries);
     });
   }
   sendSelectedPeriod() {

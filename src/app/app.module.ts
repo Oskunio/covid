@@ -13,6 +13,10 @@ import {MatInputModule} from '@angular/material/input';
 import { FilterComponent } from './components/filter/filter.component';
 import { Chart2Component } from './components/chart2/chart2.component';
 import { Chart3Component } from './components/chart3/chart3.component';
+import { TableComponent } from './components/table/table.component';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -20,7 +24,8 @@ import { Chart3Component } from './components/chart3/chart3.component';
     ChartComponent,
     FilterComponent,
     Chart2Component,
-    Chart3Component
+    Chart3Component,
+    TableComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +37,10 @@ import { Chart3Component } from './components/chart3/chart3.component';
     MatAutocompleteModule,
     FormsModule,
     ReactiveFormsModule,
-    MatInputModule
+    MatInputModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [],
   bootstrap: [AppComponent]
